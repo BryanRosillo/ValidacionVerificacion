@@ -1,32 +1,50 @@
 from behave import *
 from Banco import *
-from PersonaNatural import *
+from CuentaCorriente import *
 from CuentaAhorro import *
-
-use_step_matcher("re")
-
+from PersonaJuridica import *
 
 
-@step("una persona natural quiera aperturar una cuenta de ahorros en el BGR con 0 USD")
-def step_impl(context):
+#use_step_matcher("re")
+
+@step("una persona natural quiera aperturar una cuenta de ahorros en el BGR con {monto:f} USD")
+def step_impl(context, monto):
     context.banco = Banco("Pichincha")
-    context.personaNatural = PersonaNatural("German")
-    context.cuentaAhorro = context.banco.abrir_cuenta_ahorro(context.personaNatural)
+    context.persona = PersonaNatural("German")
+    context.cuenta = context.banco.abrir_cuenta_ahorro(context.persona, monto)
 
-    assert isinstance(context.cuentaAhorro,CuentaAhorro)
-    assert context.cuentaAhorro.saldo == 0
-
+    assert isinstance(context.cuenta, CuentaAhorro)
+    assert context.cuenta.saldo > 0
 
 
 @step("se asigna un número de cuenta único")
 def step_impl(context):
-    context.banco.asignar_número_de_cuentaÚnico(context.cuentaAhorro)
-    assert context.banco.asignar_número_de_cuentaÚnico(context.cuentaAhorro) == True
-
+    context.banco.asignar_número_de_cuentaÚnico(context.cuenta)
+    assert context.banco.asignar_número_de_cuentaÚnico(context.cuenta) == True
 
 
 @step("se crea un usuario para acceder a las herramientas financieras")
 def step_impl(context):
-    context.banco.habilitar_acceso_a_herramientas_financieras(context.cuentaAhorro)
-    assert context.cuentaAhorro.herramientasHabilitadas == True
+    context.banco.habilitar_acceso_a_herramientas_financieras(context.cuenta)
+    assert context.cuenta.herramientasHabilitadas == True
 
+
+@step('una persona natural quiera aperturar una cuenta de corriente en el BGR con "{monto_apertura:f}" USD')
+def step_impl(context, monto_apertura):
+    context.banco = Banco("Pichincha")
+    context.persona = PersonaNatural("German")
+    context.cuenta = context.banco.abrir_cuenta_corriente(context.persona, monto_apertura)
+
+    assert isinstance(context.cuenta, CuentaCorriente)
+    assert context.cuenta.saldo >= 200
+
+
+@step('una persona jurídica quiera aperturar una cuenta de corriente en el BGR con "{monto_apertura:f}" USD')
+def step_impl(context, monto_apertura):
+    context.banco = Banco("Pichincha")
+    context.persona = PersonaJuridica("La favorita S.A")
+
+    context.cuenta = context.banco.abrir_cuenta_corriente(context.persona, monto_apertura)
+
+    assert isinstance(context.cuenta, CuentaCorriente)
+    assert context.cuenta.saldo >= 500

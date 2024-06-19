@@ -1,6 +1,8 @@
 from CuentaAhorro import *
 from PersonaNatural import *
+from CuentaCorriente import *
 import random
+
 
 class Banco:
 
@@ -11,11 +13,8 @@ class Banco:
     def agregar_cuenta(self, cuenta):
         self.cuentas.append(cuenta)
 
-    def abrir_cuenta_ahorro(self, personaNatural):
-        if not isinstance(personaNatural, PersonaNatural):
-            raise TypeError("El titular debe ser una persona natural.")
-
-        cuentaAhorro = CuentaAhorro(personaNatural.nombre)
+    def abrir_cuenta_ahorro(self, personaNatural, saldo):
+        cuentaAhorro = CuentaAhorro(personaNatural, saldo)
         self.agregar_cuenta(cuentaAhorro)
         return cuentaAhorro
 
@@ -35,6 +34,16 @@ class Banco:
 
     def habilitar_acceso_a_herramientas_financieras(self, cuenta):
         cuenta.herramientasHabilitadas = True
+
+    def abrir_cuenta_corriente(self, persona, monto_apertura):
+        cuentaCorriente = CuentaCorriente(persona, monto_apertura)
+        self.agregar_cuenta(cuentaCorriente)
+        return cuentaCorriente
+
+
+
+
+
 
 
 
